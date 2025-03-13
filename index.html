@@ -72,19 +72,26 @@
             margin-bottom: 20px;
         }
 
-        #setTimerBtn, #fullscreenBtn {
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
+        .icon-button {
+            width: 50px;
+            height: 50px;
             background: #444;
-            color: white;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
             transition: background 0.3s;
-            margin: 5px;
+            margin: 10px;
         }
-        #setTimerBtn:hover, #fullscreenBtn:hover {
+
+        .icon-button:hover {
             background: #666;
+        }
+
+        .icon-button img {
+            width: 30px;
+            height: 30px;
         }
 
         .timer-controls {
@@ -112,12 +119,8 @@
     <div id="page">
         <h1 id="motivation"></h1>
         <div id="clock"></div>
-        <button id="setTimerBtn" onclick="window.location.href='timer.html'">Set Timer</button>
-        <button id="fullscreenBtn">Go Full Screen</button>
-        <div class="timer-controls">
-            <button id="startTimer">Start</button>
-            <button id="pauseTimer">Pause</button>
-            <button id="stopTimer">Stop</button>
+        <div class="icon-button" id="setTimerBtn" onclick="window.location.href='timer.html'">
+            <img src="timer-icon.png" alt="Timer">
         </div>
     </div>
 
@@ -142,15 +145,27 @@
         ];
         document.getElementById("motivation").innerText = 
             motivationMessages[Math.floor(Math.random() * motivationMessages.length)];
+        
+        // Prevent Phone from Sleeping
+        let wakeLock = null;
+        async function requestWakeLock() {
+            if ('wakeLock' in navigator) {
+                try {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                    console.log("Wake Lock active");
+                } catch (err) {
+                    console.error("Wake Lock failed:", err);
+                }
+            }
+        }
 
-        // Full Screen Mode
-        document.getElementById("fullscreenBtn").addEventListener("click", function() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen();
-            } else {
-                document.exitFullscreen();
+        document.addEventListener("visibilitychange", () => {
+            if (wakeLock !== null && document.visibilityState === "visible") {
+                requestWakeLock();
             }
         });
+
+        requestWakeLock();
     </script>
 </body>
 </html>
