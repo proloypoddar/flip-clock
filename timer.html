@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set Timer</title>
+    
+    <!-- jQuery and FlipClock Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flipclock@0.7.8/compiled/flipclock.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flipclock@0.7.8/compiled/flipclock.css">
+    
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: black;
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 40px;
+            color: white;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
+        }
+
+        #timerContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #timerInput {
+            padding: 10px;
+            font-size: 20px;
+            width: 80px;
+            text-align: center;
+            border-radius: 5px;
+            border: none;
+            margin-bottom: 20px;
+        }
+
+        #startTimerBtn {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            background: #444;
+            color: white;
+            transition: background 0.3s;
+        }
+        #startTimerBtn:hover {
+            background: #666;
+        }
+
+        #clockContainer {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #clock {
+            margin-top: 20px;
+        }
+
+        .timer-controls {
+            display: none;
+            margin-top: 20px;
+        }
+        .timer-controls button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            background: #444;
+            color: white;
+            transition: background 0.3s;
+            margin: 5px;
+        }
+        .timer-controls button:hover {
+            background: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>Set Study Timer</h1>
+    <div id="timerContainer">
+        <input type="number" id="timerInput" placeholder="Minutes" min="1" max="120">
+        <button id="startTimerBtn">Start Timer</button>
+    </div>
+    <div id="clockContainer">
+        <div id="clock"></div>
+        <div class="timer-controls">
+            <button id="pauseTimer">Pause</button>
+            <button id="stopTimer">Stop</button>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            let clock;
+            
+            $('#startTimerBtn').click(function() {
+                let minutes = parseInt($('#timerInput').val());
+                if (isNaN(minutes) || minutes <= 0) {
+                    alert("Please enter a valid number of minutes!");
+                    return;
+                }
+                
+                let seconds = minutes * 60;
+                $('#timerContainer').hide(); // Hide input and start button
+                $('#clockContainer').show(); // Show the clock in the middle
+                $('.timer-controls').show();
+                
+                if (clock) {
+                    clock.stop();
+                }
+                
+                clock = $('#clock').FlipClock(seconds, {
+                    clockFace: 'MinuteCounter',
+                    countdown: true,
+                    autoStart: true,
+                    callbacks: {
+                        stop: function() {
+                            alert("Time's up! Take a break, Proloy!");
+                            window.location.href = "index.html";
+                        }
+                    }
+                });
+
+                // Pause Timer
+                $('#pauseTimer').click(function() {
+                    clock.stop();
+                });
+
+                // Stop Timer and Reset
+                $('#stopTimer').click(function() {
+                    clock.stop();
+                    $('#clockContainer').hide();
+                    $('.timer-controls').hide();
+                    $('#timerContainer').show();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
